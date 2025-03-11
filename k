@@ -34,9 +34,10 @@ quit () {
     fi
 }
 
+# 使用函数+local可减少变量作用到整个shell
 main () {
     # str -> array  see: https://www.shellcheck.net/wiki/SC2207
-    # GNU bash, version 3.00.15(1)-release (x86_64-redhat-linux-gnu) 不兼容
+    # 经测试 以下用发在GNU bash, version 3.00.15(1)-release (x86_64-redhat-linux-gnu)可正常使用
     local options=( $(find "${KUBECONFIGPATH}" -maxdepth 1  -regex '.*\.ya*ml' | sort ) )
     # or
     # options=()
@@ -89,14 +90,16 @@ main () {
 
     _OLD_VIRTUAL_PS1="${PS1:-}"
 
-    local tag
-    tag=$(basename "$(basename "${KUBECONFIG}" .yml)" .yaml)
+    # local tag
+    # tag=$(basename "$(basename "${KUBECONFIG}" .yml)" .yaml)
 
-    if [[ $tag =~ 'prod' ]]; then 
-        PS1="(\[\e[1;35m${tag}\e[m\]) ${PS1:-}"
-    else
-        PS1="(\[\e[1;32m${tag}\e[m\]) ${PS1:-}"
-    fi
+    # 添加颜色会产生字符位移
+    # if [[ $tag =~ 'prod' ]]; then 
+    #     PS1="(\[\e[1;35m${tag}\e[m\]) ${PS1:-}"
+    # else
+    #     PS1="(\[\e[1;32m${tag}\e[m\]) ${PS1:-}"
+    # fi
+    PS1="($(basename "$(basename "${KUBECONFIG}" .yml)" .yaml))$PS1"
     export PS1
 }
 
