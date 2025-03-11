@@ -4,7 +4,6 @@
 KUBECONFIGPATH=${KUBECONFIGPATH:-"$HOME/.kube/"}
 
 render_options() {
-
     for i in "${!options[@]}"; do
         if [ $i -eq $options_index ]; then
             echo -e "\033[47;30m${i} ${options[$i]}    \033[0m"
@@ -37,7 +36,7 @@ quit () {
 
 main () {
     local options=()
-    # str -> array  see: https://www.shellcheck.net/wiki/SC2207
+    # string -> array  see: https://www.shellcheck.net/wiki/SC2207
     # bash3 & bash4 test ok
     IFS=" " read -r -a options <<< "$(find "${KUBECONFIGPATH}" -maxdepth 1  -regex '.*\.ya*ml' | sort | tr "\n" " ")"
 
@@ -76,17 +75,16 @@ main () {
             tput cuu "${options_len}"
             tput ed 
             render_options
+
         done
 
         export KUBECONFIG="${options[$options_index]}"
 
         _OLD_VIRTUAL_PS1="${PS1:-}"
-
         # DO NOT USE COLOR!
         PS1="($(basename "$(basename "${KUBECONFIG}" .yml)" .yaml))$PS1"
         export PS1
     fi
-
 }
 
 main "$@"
